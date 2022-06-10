@@ -1,5 +1,7 @@
 # ZPR-parallel_execution
 
+## Author
+### Cezary Moczulski
 
 ## Description
 
