@@ -1,13 +1,14 @@
 use libc;
 use std::ffi::CStr;
 use std::fs;
+use std::cmp;
 
 # [no_mangle]
 pub extern fn parallelized_function(args: *const *const libc::c_char, argc: libc::c_uint) -> libc::c_int {
     let mut arguments = Vec::<String>::new();
     let mut current_pointer = args;
     unsafe {
-        for _ in 0..argc {
+        for _ in 0..cmp::min(argc, 2) { // limit number of args processed to number required by function called later
             match CStr::from_ptr(*current_pointer).to_str() {
                 Ok(val) => arguments.push(val.to_owned()),
                 Err(_) => return -1 // arg had invalid UTF-8 data, contents of Err has the details, you may want to change the way this situation is handled
