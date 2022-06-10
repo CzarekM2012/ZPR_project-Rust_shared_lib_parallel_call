@@ -3,7 +3,7 @@ import argparse
 from threading import Thread
 from multiprocessing import cpu_count
 import numpy as np
-
+from sys import platform
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Parallelize execution of multiple calls to function.')
@@ -43,8 +43,10 @@ def call_function(args, *kwargs):
 
 
 if __name__ == '__main__':
-    parallelized = ctypes.CDLL('target/release/dynamic_lib')
     call_args = parse_arguments()
+    # Relative paths I got after building Rust code on Windows and Ubuntu, will probably cause the program to stop with error if used on another
+    shared_lib_path = 'target/release/dynamic_lib' if platform=='win32' else 'target/release/libdynamic_lib.so'
+    parallelized = ctypes.CDLL(shared_lib_path)
 
     # Prepare arguments sets for threads
     truncated_args = truncate_args(call_args.function_args, call_args.argc)
